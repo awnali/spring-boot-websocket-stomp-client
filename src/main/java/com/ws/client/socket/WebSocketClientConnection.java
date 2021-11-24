@@ -1,4 +1,4 @@
-package com.ws.client;
+package com.ws.client.socket;
 
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.StompHeaders;
@@ -11,7 +11,6 @@ import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 
 import javax.websocket.ClientEndpoint;
-import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 
 @ClientEndpoint

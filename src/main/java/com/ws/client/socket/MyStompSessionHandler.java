@@ -1,5 +1,6 @@
-package com.ws.client;
+package com.ws.client.socket;
 
+import com.ws.client.model.Message;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.messaging.simp.stomp.StompCommand;
