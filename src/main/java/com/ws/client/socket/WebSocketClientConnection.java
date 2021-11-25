@@ -23,7 +23,11 @@ public class WebSocketClientConnection {
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 
         StompHeaders connectHeaders =  new StompHeaders();
+
+        // user id 48
         connectHeaders.add("token", "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0OCIsImV4cCI6MTYzNzg5MjA0NH0._C11kvuMq_p5gOgxqWLSRjOpx_eshfORCiB3zVvFI3CWCxA1SN1h5BpbSsBvYpB3fqaOtoIOgcI-JfFcka6JIw");
+        // user id 2
+//        connectHeaders.add("token", "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwiZXhwIjoxNjM3OTkwNDQyfQ.tzgYEjZqBKCKP7OjAL2cT45dWJKy8uSYydWpZ_Ou5a8ayN4yxuaHICxb8g4SG9Wzt2jPAHXkVGo3kZpf6py3Yw");
 
         StompSessionHandler sessionHandler = new MyStompSessionHandler();
         ListenableFuture<StompSession> connectListener = stompClient.connect(endpointURI, new WebSocketHttpHeaders(), connectHeaders, sessionHandler);
