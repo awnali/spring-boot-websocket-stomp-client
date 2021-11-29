@@ -19,6 +19,6 @@ public class WebSocketClientApplication {
 
 	@Bean
 	public StompSession getSocketConnection() throws ExecutionException, InterruptedException {
-		return WebSocketClientConnection.connect(WS_ENDPOINT);
+		return new WebSocketClientConnection().connect(WS_ENDPOINT);
 	}
 }

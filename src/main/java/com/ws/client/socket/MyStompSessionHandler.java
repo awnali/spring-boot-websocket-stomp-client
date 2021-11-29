@@ -17,11 +17,11 @@ public class MyStompSessionHandler extends StompSessionHandlerAdapter {
     @Override
     public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
         logger.info("New session established : " + session.getSessionId());
-        session.subscribe("/topic/messages", this);
-        logger.info("Subscribed to /topic/messages");
-
-        session.subscribe("/user/queue/messages", this);
-        logger.info("Subscribed to /user/queue/chat");
+//        session.subscribe("/topic/messages", this);
+//        logger.info("Subscribed to /topic/messages");
+//
+//        session.subscribe("/user/queue/messages", this);
+//        logger.info("Subscribed to /user/queue/chat");
 //        session.send("/app/greeting", getSampleMessage());
 //        logger.info("Message sent to websocket server");
     }
