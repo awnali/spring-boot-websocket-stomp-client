@@ -22,7 +22,9 @@ public class SendMessageController {
     @GetMapping("/user-only")
     public String fireGreeting() {
         System.out.println("Message should only go to this user, who is sending the message");
-        template.send("/app/chat", getSampleMessage());
+        synchronized (template) {
+            template.send("/app/chat", getSampleMessage());
+        }
 
         return "Sent";
     }
@@ -30,21 +32,28 @@ public class SendMessageController {
     @GetMapping("/broadcast")
     public String fireBroadcast() {
         System.out.println("Fire broadcast: Reply should go to every user which is subscribed to /topic/messages");
-        template.send("/app/greeting", getSampleMessage());
+
+        synchronized (template){
+            template.send("/app/greeting", getSampleMessage());
+        }
         return "Sent";
     }
 
     @GetMapping("/to-specific-user/{userId}")
     public String fireToSpecificUser(@PathVariable String userId) {
         System.out.println("Message should only go to user with UserId ");
-        template.send("/app/chat-with-user/" + userId, getSampleMessage());
+        synchronized (template) {
+            template.send("/app/chat-with-user/" + userId, getSampleMessage());
+        }
         return "Sent";
     }
 
     @GetMapping("/request-reply")
     public String requestReply() {
         System.out.println("Fire request/reply: reply will come to user who sent the message");
-        template.subscribe("/app/subscribe-to-chat", new MyStompSessionHandler());
+        synchronized (template) {
+            template.subscribe("/app/subscribe-to-chat", new MyStompSessionHandler());
+        }
         return "Sent";
     }
 
