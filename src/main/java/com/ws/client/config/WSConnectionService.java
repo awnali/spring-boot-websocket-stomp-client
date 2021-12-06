@@ -60,10 +60,9 @@ public class WSConnectionService {
         stompClient.setTaskScheduler(new DefaultManagedTaskScheduler());
         ListenableFuture<StompSession> connectListener = stompClient.connect(WS_ENDPOINT, new WebSocketHttpHeaders(),
                                                                              connectHeaders, myStompSessionHandler);
-        StompSession session = connectListener.get();
         logger.info("new session reset to ws");
-        this.setSession(session);
-        return session;
+        this.setSession(connectListener.get());
+        return this.getSession();
     }
 
     public void connectionRetry(){
@@ -76,16 +75,16 @@ public class WSConnectionService {
     }
 
     public void sendMessage(String topicUrl, Message message){
-        synchronized (this.session){
-            StompSession s = this.session;
+        synchronized (this.getSession()){
+            StompSession s = this.getSession();
             s.send(topicUrl, message);
         }
     }
 
     public void subscribe(String topicUrl){
-        synchronized (this.session){
-            StompSession s = this.session;
-            s.subscribe("/app/subscribe-to-chat", myStompSessionHandler);
+        synchronized (this.getSession()){
+            StompSession s = this.getSession();
+            s.subscribe(topicUrl, myStompSessionHandler);
         }
     }
 }

@@ -43,7 +43,6 @@ public class SendMessageController {
         return "Sent";
     }
 
-
     private Message getSampleMessage() {
         Message msg = new Message();
         msg.setFrom("Nicky");
