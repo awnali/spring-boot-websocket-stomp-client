@@ -1,18 +1,30 @@
 package com.ws.client.socket;
 
+import com.ws.client.ApplicationContextProvider;
+import com.ws.client.WebSocketClientApplication;
 import com.ws.client.model.Message;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.messaging.simp.stomp.StompCommand;
-import org.springframework.messaging.simp.stomp.StompHeaders;
-import org.springframework.messaging.simp.stomp.StompSession;
-import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.SingletonBeanRegistry;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.messaging.simp.stomp.*;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.lang.reflect.Type;
+import java.util.concurrent.ExecutionException;
 
+@Service
 public class MyStompSessionHandler extends StompSessionHandlerAdapter {
 
     final Logger logger = LogManager.getLogger(MyStompSessionHandler.class);
+
+    final MyService s = new MyService();
 
     @Override
     public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
@@ -27,14 +39,27 @@ public class MyStompSessionHandler extends StompSessionHandlerAdapter {
     }
 
     @Override
-    public void handleException(StompSession session, StompCommand command, StompHeaders headers, byte[] payload, Throwable exception) {
-        logger.error("Got an exception", exception);
+    public void handleException(StompSession session, StompCommand command, StompHeaders headers, byte[] payload,
+                                Throwable exception) {
+        logger.error("Got an exception");
+
     }
 
     @Override
     public void handleTransportError(StompSession session, Throwable exception) {
+        logger.error("Got transport exception");
 
-        logger.error("Got transport exception", exception);
+        try {
+            Thread.sleep(10000);
+
+            logger.info("after sleep");
+            ApplicationContextProvider.getApplicationContext()
+                                      .getAutowireCapableBeanFactory()
+                                      .autowireBean(s);
+            s.connect();
+        } catch (ExecutionException | InterruptedException e) {
+            logger.info("catching the exception on retry");
+        }
     }
 
     @Override

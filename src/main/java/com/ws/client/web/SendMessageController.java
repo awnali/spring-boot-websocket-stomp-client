@@ -2,6 +2,8 @@ package com.ws.client.web;
 
 import com.ws.client.model.Message;
 import com.ws.client.socket.MyStompSessionHandler;
+import com.ws.client.socket.WebSocketClientConnection;
+import com.ws.client.socket.WebSocketMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
@@ -19,11 +21,16 @@ public class SendMessageController {
     @Autowired
     private StompSession template;
 
+    @Autowired
+    WebSocketMessageService service;
+
+
     @GetMapping("/user-only")
     public String fireGreeting() {
         System.out.println("Message should only go to this user, who is sending the message");
-        synchronized (template) {
-            template.send("/app/chat", getSampleMessage());
+        StompSession t = service.getSession();
+        synchronized (t) {
+            t.send("/app/chat", getSampleMessage());
         }
 
         return "Sent";
@@ -32,9 +39,9 @@ public class SendMessageController {
     @GetMapping("/broadcast")
     public String fireBroadcast() {
         System.out.println("Fire broadcast: Reply should go to every user which is subscribed to /topic/messages");
-
-        synchronized (template){
-            template.send("/app/greeting", getSampleMessage());
+        StompSession newTemplate = service.getSession();
+        synchronized (newTemplate){
+            newTemplate.send("/app/greeting", getSampleMessage());
         }
         return "Sent";
     }
