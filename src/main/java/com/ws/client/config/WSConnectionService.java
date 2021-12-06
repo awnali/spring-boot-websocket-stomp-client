@@ -1,5 +1,6 @@
-package com.ws.client.socket;
+package com.ws.client.config;
 
+import com.ws.client.model.Message;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class WSConnectionService {
     long socketConnectionRetryInterval;
 
     @Autowired
-    WSStompSessionHandler myStompSessionHandler;
+    WSConnectionHandler myStompSessionHandler;
 
     StompSession session;
 
@@ -65,13 +66,26 @@ public class WSConnectionService {
         return session;
     }
 
-
     public void connectionRetry(){
         try {
             Thread.sleep(socketConnectionRetryInterval);
             this.connect();
         } catch (ExecutionException | InterruptedException e) {
             logger.info("catching the exception on retry");
+        }
+    }
+
+    public void sendMessage(String topicUrl, Message message){
+        synchronized (this.session){
+            StompSession s = this.session;
+            s.send(topicUrl, message);
+        }
+    }
+
+    public void subscribe(String topicUrl){
+        synchronized (this.session){
+            StompSession s = this.session;
+            s.subscribe("/app/subscribe-to-chat", myStompSessionHandler);
         }
     }
 }

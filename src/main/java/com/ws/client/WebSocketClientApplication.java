@@ -1,6 +1,6 @@
 package com.ws.client;
 
-import com.ws.client.socket.WSConnectionService;
+import com.ws.client.config.WSConnectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

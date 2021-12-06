@@ -1,4 +1,4 @@
-package com.ws.client.socket;
+package com.ws.client.config;
 
 import com.ws.client.model.Message;
 import org.apache.logging.log4j.LogManager;
@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Type;
 
 @Component
-public class WSStompSessionHandler extends StompSessionHandlerAdapter {
+public class WSConnectionHandler extends StompSessionHandlerAdapter {
 
-    final Logger logger = LogManager.getLogger(WSStompSessionHandler.class);
+    final Logger logger = LogManager.getLogger(WSConnectionHandler.class);
 
     @Autowired
     WSConnectionService ws;
@@ -40,7 +40,6 @@ public class WSStompSessionHandler extends StompSessionHandlerAdapter {
         logger.error("Got transport exception");
         ws.connectionRetry();
     }
-
 
     @Override
     public Type getPayloadType(StompHeaders headers) {
