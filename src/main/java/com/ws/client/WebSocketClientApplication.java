@@ -1,23 +1,13 @@
 package com.ws.client;
 
-import com.ws.client.socket.MyService;
 import com.ws.client.socket.WebSocketClientConnection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.beans.factory.config.SingletonBeanRegistry;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.EventListener;
-import org.springframework.messaging.converter.MappingJackson2MessageConverter;
-import org.springframework.messaging.converter.MessageConverter;
-import org.springframework.messaging.simp.stomp.DefaultStompSession;
 import org.springframework.messaging.simp.stomp.StompSession;
 
 import java.util.concurrent.ExecutionException;
@@ -29,7 +19,7 @@ public class WebSocketClientApplication {
     String WS_ENDPOINT;
 
     @Autowired
-    MyService service;
+    WebSocketClientConnection ws;
 
     public static void main(String[] args) {
         SpringApplication.run(WebSocketClientApplication.class, args);
@@ -42,7 +32,7 @@ public class WebSocketClientApplication {
 
     @Bean(name = "StompSession")
     public StompSession getSocketConnection() throws ExecutionException, InterruptedException {
-        return service.connect();
+        return ws.connect(WS_ENDPOINT);
     }
 
 

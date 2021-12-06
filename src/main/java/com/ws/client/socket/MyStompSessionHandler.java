@@ -24,7 +24,8 @@ public class MyStompSessionHandler extends StompSessionHandlerAdapter {
 
     final Logger logger = LogManager.getLogger(MyStompSessionHandler.class);
 
-    final MyService s = new MyService();
+    final WebSocketClientConnection ws = new WebSocketClientConnection();
+    final String WS_ENDPOINT = "ws://localhost:8787/portfolio";
 
     @Override
     public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
@@ -55,8 +56,8 @@ public class MyStompSessionHandler extends StompSessionHandlerAdapter {
             logger.info("after sleep");
             ApplicationContextProvider.getApplicationContext()
                                       .getAutowireCapableBeanFactory()
-                                      .autowireBean(s);
-            s.connect();
+                                      .autowireBean(ws);
+            ws.connect(WS_ENDPOINT);
         } catch (ExecutionException | InterruptedException e) {
             logger.info("catching the exception on retry");
         }
