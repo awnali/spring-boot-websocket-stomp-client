@@ -3,13 +3,12 @@ package com.ws.client.socket;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
-import org.springframework.messaging.simp.stomp.StompSessionHandler;
 import org.springframework.scheduling.concurrent.DefaultManagedTaskScheduler;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.socket.WebSocketHttpHeaders;
@@ -17,19 +16,33 @@ import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 
-import javax.websocket.ClientEndpoint;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
 
 @Service
 public class WebSocketClientConnection {
 
     final Logger logger = LogManager.getLogger(WebSocketClientConnection.class);
 
-    @Autowired
-    WebSocketMessageService service;
+    @Value("${ws.endpoint}")
+    String WS_ENDPOINT;
 
-    public StompSession connect(String endpointURI) throws ExecutionException, InterruptedException {
-        logger.info("connecting ...");
+    @Value("${ws.connection-retry-interval}")
+    long socketConnectionRetryInterval;
+
+    @Autowired
+    MyStompSessionHandler myStompSessionHandler;
+    StompSession session;
+
+    public StompSession getSession() {
+        return session;
+    }
+
+    public void setSession(StompSession session) {
+        this.session = session;
+    }
+
+    public StompSession connect() throws ExecutionException, InterruptedException {
+        logger.info("connecting to ws ...");
         WebSocketClient client = new StandardWebSocketClient();
         WebSocketStompClient stompClient = new WebSocketStompClient(client);
 
@@ -43,14 +56,22 @@ public class WebSocketClientConnection {
         connectHeaders.add("token", "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwiZXhwIjoxNjM4OTE5MDM5fQ" +
                 ".hyCBal7tnYlM34LF7RDGCD4oQuuzxgl3J0uDJJ94bsvGe9dHEyQRVXHdfBoxetAjxf-P2c6M2TeKscLfR8mU4Q");
 
-        StompSessionHandler sessionHandler = new MyStompSessionHandler();
         stompClient.setTaskScheduler(new DefaultManagedTaskScheduler());
-        logger.info("just before connecting");
-        ListenableFuture<StompSession> connectListener = stompClient.connect(endpointURI, new WebSocketHttpHeaders(),
-                                                                             connectHeaders, sessionHandler);
+        ListenableFuture<StompSession> connectListener = stompClient.connect(WS_ENDPOINT, new WebSocketHttpHeaders(),
+                                                                             connectHeaders, myStompSessionHandler);
         StompSession session = connectListener.get();
-        logger.info("new session reset");
-        service.setSession(session);
+        logger.info("new session reset to ws");
+        this.setSession(session);
         return session;
+    }
+
+
+    public void connectionRetry(){
+        try {
+            Thread.sleep(socketConnectionRetryInterval);
+            this.connect();
+        } catch (ExecutionException | InterruptedException e) {
+            logger.info("catching the exception on retry");
+        }
     }
 }
