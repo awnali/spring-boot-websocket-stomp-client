@@ -1,8 +1,8 @@
 package com.ws.client.web;
 
 import com.ws.client.model.Message;
-import com.ws.client.socket.MyStompSessionHandler;
-import com.ws.client.socket.WebSocketClientConnection;
+import com.ws.client.socket.WSStompSessionHandler;
+import com.ws.client.socket.WSConnectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SendMessageController {
 
     @Autowired
-    WebSocketClientConnection con;
+    WSConnectionService con;
 
     @GetMapping("/user-only")
     public String fireGreeting() {
@@ -53,7 +53,7 @@ public class SendMessageController {
         System.out.println("Fire request/reply: reply will come to user who sent the message");
         StompSession t = con.getSession();
         synchronized (con) {
-            t.subscribe("/app/subscribe-to-chat", new MyStompSessionHandler());
+            t.subscribe("/app/subscribe-to-chat", new WSStompSessionHandler());
         }
         return "Sent";
     }

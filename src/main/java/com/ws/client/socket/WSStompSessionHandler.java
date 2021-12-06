@@ -4,20 +4,18 @@ import com.ws.client.model.Message;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.stomp.*;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Type;
-import java.util.concurrent.ExecutionException;
 
 @Component
-public class MyStompSessionHandler extends StompSessionHandlerAdapter {
+public class WSStompSessionHandler extends StompSessionHandlerAdapter {
 
-    final Logger logger = LogManager.getLogger(MyStompSessionHandler.class);
+    final Logger logger = LogManager.getLogger(WSStompSessionHandler.class);
 
     @Autowired
-    WebSocketClientConnection ws;
+    WSConnectionService ws;
 
     @Override
     public void afterConnected(StompSession session, StompHeaders connectedHeaders) {

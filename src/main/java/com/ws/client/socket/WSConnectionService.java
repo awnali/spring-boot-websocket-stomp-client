@@ -4,7 +4,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
@@ -19,9 +18,9 @@ import org.springframework.web.socket.messaging.WebSocketStompClient;
 import java.util.concurrent.ExecutionException;
 
 @Service
-public class WebSocketClientConnection {
+public class WSConnectionService {
 
-    final Logger logger = LogManager.getLogger(WebSocketClientConnection.class);
+    final Logger logger = LogManager.getLogger(WSConnectionService.class);
 
     @Value("${ws.endpoint}")
     String WS_ENDPOINT;
@@ -30,7 +29,8 @@ public class WebSocketClientConnection {
     long socketConnectionRetryInterval;
 
     @Autowired
-    MyStompSessionHandler myStompSessionHandler;
+    WSStompSessionHandler myStompSessionHandler;
+
     StompSession session;
 
     public StompSession getSession() {
