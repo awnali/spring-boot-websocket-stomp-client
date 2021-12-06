@@ -34,14 +34,6 @@ public class WSConnectionService {
 
     StompSession session;
 
-    public StompSession getSession() {
-        return session;
-    }
-
-    public void setSession(StompSession session) {
-        this.session = session;
-    }
-
     public StompSession connect() throws ExecutionException, InterruptedException {
         logger.info("connecting to ws ...");
         WebSocketClient client = new StandardWebSocketClient();
@@ -86,5 +78,13 @@ public class WSConnectionService {
             StompSession s = this.getSession();
             s.subscribe(topicUrl, myStompSessionHandler);
         }
+    }
+
+    public StompSession getSession() {
+        return session;
+    }
+
+    public void setSession(StompSession session) {
+        this.session = session;
     }
 }
